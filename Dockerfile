@@ -40,7 +40,7 @@ RUN useradd --create-home --shell /bin/bash appuser \
 USER appuser
 
 # 暴露端口
-EXPOSE 8000
+EXPOSE 7860
 
 # 启动命令
-CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "7860"]

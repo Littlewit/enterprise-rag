@@ -229,7 +229,7 @@ docker compose up -d
 # 方式二：docker run
 docker run -d \
   --name enterprise-rag \
-  -p 8000:8000 \
+  -p 7860:7860 \
   --env-file .env \
   -v $(pwd)/data:/app/data \
   -v $(pwd)/models:/app/models \
@@ -241,11 +241,11 @@ docker run -d \
 docker logs -f enterprise-rag
 
 # 验证服务
-curl http://localhost:8000/
+curl http://localhost:7860/
 # 应返回 HTML 页面
 
 # 测试 API
-curl http://localhost:8000/chat/stream?query=你好&department=测试部
+curl http://localhost:7860/chat/stream?query=你好&department=测试部
 ```
 
 ```bash
@@ -374,7 +374,7 @@ docker ps
 | 80 | TCP | 0.0.0.0/0 | HTTP（Nginx） |
 | 443 | TCP | 0.0.0.0/0 | HTTPS（可选） |
 
-> ⚠️ 8000 端口建议仅对 127.0.0.1 开放（通过 Nginx 反代），或仅限白名单 IP 访问。
+> ⚠️ 7860 端口建议仅对 127.0.0.1 开放（通过 Nginx 反代），或仅限白名单 IP 访问。
 
 #### 2.4.5 服务器防火墙配置（Ubuntu UFW）
 
@@ -439,14 +439,14 @@ services:
     container_name: enterprise-rag
     restart: unless-stopped
     ports:
-      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:7860:7860"
     env_file:
       - .env
     volumes:
       - ./data:/app/data
       - ./models:/app/models
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      test: ["CMD", "curl", "-f", "http://localhost:7860/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -486,10 +486,10 @@ docker compose ps
 
 ```bash
 # 测试 HTML 页面
-curl -s http://localhost:8000/ | head -5
+curl -s http://localhost:7860/ | head -5
 
 # 测试流式 API
-curl -N http://localhost:8000/chat/stream?query=你好&department=测试部
+curl -N http://localhost:7860/chat/stream?query=你好&department=测试部
 ```
 
 ---
@@ -524,7 +524,7 @@ server {
 
     # SSE 流式端点 —— 必须关闭缓冲
     location /chat/stream {
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:7860;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -540,7 +540,7 @@ server {
 
     # 其他请求（上传、静态资源）
     location / {
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:7860;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -626,7 +626,7 @@ sudo tar -czf rag-backup-$(date +%Y%m%d).tar.gz /opt/enterprise-rag/data/
 
 ```bash
 # 手动触发健康检查
-curl -f http://localhost:8000/ && echo "✓ 服务正常"
+curl -f http://localhost:7860/ && echo "✓ 服务正常"
 
 # 查看容器资源使用
 docker stats enterprise-rag --no-stream
@@ -702,7 +702,7 @@ docker compose restart                            # 重启
 | 流式输出中断 | Nginx 未关闭缓冲 | 检查 `/chat/stream` location 中 `proxy_buffering off` |
 | 上传大文件失败 | Nginx `client_max_body_size` 太小 | 增大到 `50m` |
 | 模型下载失败 | 网络不通 | 配置 ModelScope 代理或提前下载模型挂载 |
-| 端口被占用 | 其他服务占用 8000 | `sudo lsof -i :8000` 查看并调整 |
+| 端口被占用 | 其他服务占用 7860 | `sudo lsof -i :7860` 查看并调整 |
 | 拉取镜像 401 | 未登录阿里云仓库 | `docker login` 重新认证 |
 
 ### C. 服务器资源分配参考

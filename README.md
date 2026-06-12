@@ -126,12 +126,12 @@ cp .env.example .env
 ### 4. 启动服务
 
 ```bash
-uv run uvicorn backend.app:app --host 0.0.0.0 --port 8000 --reload
+uv run uvicorn backend.app:app --host 0.0.0.0 --port 7860 --reload
 ```
 
 ### 5. 打开前端
 
-浏览器访问 `http://localhost:8000`，输入部门名称后即可开始使用。
+浏览器访问 `http://localhost:7860`，输入部门名称后即可开始使用。
 
 ---
 
@@ -190,7 +190,7 @@ enterprise-rag/
 
 ### 基础信息
 
-- **Base URL**: `http://localhost:8000`
+- **Base URL**: `http://localhost:7860`
 - **Content-Type**: `application/json`（上传使用 `multipart/form-data`）
 
 ---
@@ -234,7 +234,7 @@ enterprise-rag/
 **cURL 示例**：
 
 ```bash
-curl -X POST "http://localhost:8000/upload?department=技术部" \
+curl -X POST "http://localhost:7860/upload?department=技术部" \
   -F "file=@产品手册.pdf"
 ```
 
@@ -289,7 +289,7 @@ es.onmessage = (event) => {
 **cURL 示例**：
 
 ```bash
-curl -N "http://localhost:8000/chat/stream?query=产品有哪些功能&department=技术部"
+curl -N "http://localhost:7860/chat/stream?query=产品有哪些功能&department=技术部"
 ```
 
 ---
@@ -392,7 +392,7 @@ Type=simple
 User=nobody
 WorkingDirectory=/opt/enterprise-rag
 EnvironmentFile=/opt/enterprise-rag/.env
-ExecStart=/root/.local/bin/uv run uvicorn backend.app:app --host 0.0.0.0 --port 8000
+ExecStart=/root/.local/bin/uv run uvicorn backend.app:app --host 0.0.0.0 --port 7860
 Restart=always
 RestartSec=10
 
@@ -423,7 +423,7 @@ server {
 
     # SSE 需要关闭缓冲
     location /chat/stream {
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:7860;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_buffering off;           # SSE 关键配置
@@ -432,7 +432,7 @@ server {
     }
 
     location / {
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:7860;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
@@ -475,7 +475,7 @@ docker compose up -d
 
 3. 验证：
 ```bash
-curl http://localhost:8000/chat/stream?query=你好&department=测试部
+curl http://localhost:7860/chat/stream?query=你好&department=测试部
 ```
 
 ---

@@ -6,7 +6,7 @@ services:
     container_name: enterprise-rag
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "7860:7860"
     env_file:
       - .env
     volumes:
@@ -20,7 +20,7 @@ services:
           memory: 4G
           cpus: "2"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      test: ["CMD", "curl", "-f", "http://localhost:7860/"]
       interval: 30s
       timeout: 10s
       retries: 3
