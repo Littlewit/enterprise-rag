@@ -25,6 +25,9 @@ models/
 # Docker
 docker-compose.override.yml
 
+# 服务器启动文档
+SERVER_START.md
+
 # IDE
 .vscode/
 .idea/

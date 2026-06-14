@@ -6,11 +6,12 @@ WORKDIR /app
 # 安装 uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-# 先复制依赖声明文件，利用 Docker 缓存层
-COPY pyproject.toml uv.lock ./
+# 先复制依赖声明文件
+COPY pyproject.toml ./
 
-# 安装依赖到虚拟环境
-RUN uv sync --frozen --no-dev --no-install-project
+# 安装依赖到虚拟环境（使用阿里云镜像，国内网络更稳定）
+RUN uv sync --no-dev --no-install-project \
+    --index-url https://mirrors.aliyun.com/pypi/simple/
 
 # ===== 运行阶段 =====
 FROM python:3.13-slim AS runtime
